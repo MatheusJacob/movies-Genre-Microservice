@@ -16,7 +16,7 @@ module.exports = {
 			],
 			aliases: {
 				"REST /genres": "genres",
-
+				"REST /movies": "movies",
 			}
 		}]
 
