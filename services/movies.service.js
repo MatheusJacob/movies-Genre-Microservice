@@ -16,11 +16,11 @@ module.exports = {
 		populates : {
 			"genres" : {
 				action: "genres.get",
-                params: {
+				params: {
 					populate : "",
 					fields: "title,_id",
 					searchFields: ""
-                }
+				}
 			}
 		},
 		entityValidator: {
