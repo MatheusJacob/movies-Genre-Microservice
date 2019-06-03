@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = {
-	namespace: "dev",
+	namespace: "moviesgenre",
 	nodeID: null,
 
 	logger: true,
