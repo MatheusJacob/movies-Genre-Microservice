@@ -25,7 +25,8 @@
     "moleculer": "^0.11.0",
     "moleculer-db": "^0.7.9",
     "moleculer-db-adapter-mongo": "^0.4.2",
-    "moleculer-web": "^0.6.0"
+    "moleculer-web": "^0.6.0",
+    "rimraf": "^2.6.3"
   },
   "engines": {
     "node": ">= 6.x.x"
