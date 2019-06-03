@@ -4,6 +4,7 @@ coverage/
 npm-debug.log
 stats.json
 yarn-error.log
-
+db/*
+data/*
 #
 .vscode
