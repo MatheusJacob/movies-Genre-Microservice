@@ -40,7 +40,7 @@ afterAll(() => broker.stop());
 
 describe("Test 'genres' service", () => {
 
-	describe("Test 'Genres.insert' action", () => {
+	describe("Test 'Genres.create' action", () => {
 
 		it("should return validation error, if sent without parameters", () => {
 			return broker.call("genres.create",{})
@@ -148,8 +148,102 @@ describe("Test 'genres' service", () => {
 
 			return broker.call("genres.get",{ populate : [], fields: ["_id","title","description"], id: 1})
 			.catch((e)=>{
-				console.log(e);
 				expect(e).toMatchObject({code : 404});
+			});
+		});
+	});
+
+	describe("Test 'Genres.list' action", () => {
+
+		beforeAll(() => {
+			rimraf("data/",function(err){
+				if(err)
+					console.log("ERROR : " , err);
+			});	
+		
+			return broker.start()
+			.then(()=>{ 
+				return seedDB(broker);
+			});
+		});
+
+		it("should return validation error, if sent without parameters", () => {
+			return broker.call("genres.list",{})
+			.catch((e) => {
+				expect(e).toBeInstanceOf(ValidationError);
+				expect(e).toMatchObject({code : 422});
+			})
+		});
+		
+		it("should get 4 genres with fields", () => {
+
+			return broker.call("genres.list",{ populate : [], fields: ["_id","title","description"], searchFields : []})
+			.then((data) => {
+				expect(data).toHaveProperty("total");
+				expect(data.total).toEqual(4);
+				expect(data.rows[0]).toHaveProperty("_id");
+				expect(data.rows[0]).toHaveProperty("title");
+				expect(data.rows[0]).toHaveProperty("description");
+			});
+		});
+
+		it("should get all genres that contains 'A' (3 expected)", () => {
+
+			return broker.call("genres.list",{ populate : [], fields: ["_id","title","description"], searchFields : ["title"], search : "A"})
+			.then((data) => {
+				expect(data).toHaveProperty("total");
+				expect(data.total).toEqual(3);
+			});
+		});
+	});
+
+	describe("Test 'Genres.delete' action", () => {
+
+		beforeAll(() => {
+			rimraf("data/",function(err){
+				if(err)
+					console.log("ERROR : " , err);
+			});	
+		
+			return broker.start()
+			.then(()=>{ 
+				return seedDB(broker);
+			});
+		});
+
+		it("should return validation error, if sent without parameters", () => {
+			return broker.call("genres.remove",{})
+			.catch((e) => {
+				expect(e).toBeInstanceOf(ValidationError);
+				expect(e).toMatchObject({code : 422});
+			})
+		});
+		
+		it("should get 404 for genre not found", () => {
+
+			return broker.call("genres.remove",{ populate : [], fields: [], searchFields : [], id : 1})
+			.catch((e) => {
+				expect(e).toMatchObject({code : 404});	
+			});
+		});
+
+		it("should delete genre", () => {
+
+			let genreDeletedId = null;
+			return broker.call("genres.list",{ populate : [], fields: ["_id","title","description"], searchFields : []})
+			.then((data) => {
+				expect(data).toHaveProperty("total");
+				expect(data.total).toEqual(4);
+
+				genreDeletedId = data.rows[0]._id;
+				return broker.call("genres.remove",{ populate : [], fields: [], id: genreDeletedId});
+			})
+			.then((data)=>{
+				expect(data).toEqual(1);				
+				return broker.call("genres.get",{ populate : [], fields: [], id: genreDeletedId});
+			})
+			.catch((e)=>{
+				expect(e).toMatchObject({code : 404});	
 			});
 		});
 	});
