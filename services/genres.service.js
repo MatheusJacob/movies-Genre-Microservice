@@ -15,7 +15,7 @@ module.exports = {
 		fields: ["_id", "title", "description"],
 		entityValidator: {
 			title: "string",
-			description: "string",
+			description: {type: "string", optional:true},
 		}
 	},
 
